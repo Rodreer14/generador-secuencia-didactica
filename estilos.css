@@ -261,35 +261,89 @@ select:disabled{ background:#f1f3f5; color:#9aa7b1; cursor:not-allowed; }
   color: var(--tinta-suave);
 }
 
-/* ---------------- Momentos ---------------- */
-.momento{ margin-bottom: 14px; }
-.momento-head{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  margin-bottom: 5px;
-}
-.momento-head h3{
-  margin:0;
+/* ---------------- Edición del plan ---------------- */
+#edicion-plan > .field{ margin-top: 12px; }
+.momento{ margin-top: 16px; }
+.momento h3{
+  margin: 0 0 6px;
   font-size: .74rem;
   font-weight: 700;
   letter-spacing: .07em;
   text-transform: uppercase;
   color: var(--acento);
 }
-.mini{
-  font-size: .72rem;
-  color: var(--tinta-suave);
-  display:flex; align-items:center; gap:5px;
+
+.tarjeta{
+  border: 1px solid var(--borde);
+  border-radius: var(--r);
+  background: #fbfcfd;
+  margin-bottom: 6px;
 }
-.mini input{ width: 62px; padding: 4px 6px; font-size:.8rem; }
+.tarjeta[open]{ border-color: var(--acento); }
+.tarjeta summary{
+  padding: 8px 11px;
+  font-size: .84rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.tarjeta-cuerpo{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 11px 11px;
+}
+.tarjeta-cuerpo .peligro{ align-self: flex-start; color: var(--alerta); }
+textarea.mono{ font-family: var(--mono); font-size: .78rem; white-space: pre; overflow-x: auto; }
+.agregar{ margin-top: 2px; font-size: .78rem; }
+
+.resumen{
+  margin: 14px 0 0;
+  padding: 8px 11px;
+  font-size: .8rem;
+  line-height: 1.45;
+  color: #15454a;
+  background: var(--acento-claro);
+  border-left: 3px solid var(--acento);
+  border-radius: 0 var(--r) var(--r) 0;
+}
+.resumen.alerta{
+  color: #6f3417;
+  background: #f8ebe3;
+  border-left-color: var(--alerta);
+}
+
+.check{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: .84rem;
+  cursor: pointer;
+}
+.check input{ margin: 0; accent-color: var(--acento); }
 
 /* ---------------- Vista previa ---------------- */
-.preview{ min-width: 0; }
+/* La vista previa queda fija junto al formulario, con su propio scroll,
+   para que siempre se vea lo que cambia sin importar la sección que se edita. */
+.preview{
+  min-width: 0;
+  position: sticky;
+  top: 92px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-top: 52px;
+}
 .preview-bar{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--lienzo);
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 0 4px 9px;
+  padding: 2px 4px 9px;
   font-size: .72rem;
   font-weight: 600;
   letter-spacing: .07em;
@@ -297,6 +351,39 @@ select:disabled{ background:#f1f3f5; color:#9aa7b1; cursor:not-allowed; }
   color: var(--tinta-suave);
 }
 .preview-note{ font-weight: 500; text-transform:none; letter-spacing:0; font-size:.78rem; }
+.pestanas{ display: flex; gap: 4px; flex-wrap: wrap; }
+.pestanas button{
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 6px 12px;
+  color: var(--tinta-suave);
+  background: transparent;
+  border: 1px solid var(--borde);
+  border-radius: var(--r);
+  cursor: pointer;
+}
+.pestanas button:hover{ border-color: #adbcc7; color: var(--tinta); }
+.pestanas button[aria-selected="true"]{
+  color: #fff;
+  background: var(--acento);
+  border-color: var(--acento);
+}
+.pestanas button:focus-visible{ outline: 2px solid var(--acento); outline-offset: 2px; }
+
+@media screen{
+  .doc.oculto{ display: none; }
+  .doc.recien{ animation: recien 1.2s ease-out; }
+}
+@keyframes recien{
+  from{ box-shadow: 0 0 0 4px rgba(15, 93, 99, .45); }
+  to{ box-shadow: 0 0 0 4px rgba(15, 93, 99, 0); }
+}
+@media (prefers-reduced-motion: reduce){
+  .doc.recien{ animation: none; }
+}
 
 /* ---------------- Documento ---------------- */
 .doc{
@@ -335,14 +422,14 @@ select:disabled{ background:#f1f3f5; color:#9aa7b1; cursor:not-allowed; }
 }
 .doc-h3{
   margin: 22px 0 8px;
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: .95rem;
-  font-weight: 600;
-  color: var(--acento);
-  border-bottom: 1px solid var(--borde);
-  padding-bottom: 4px;
+  font-weight: 700;
+  color: var(--tinta);
 }
-.doc-h3:first-of-type{ margin-top: 0; }
+.sec-num{ color: var(--acento); margin-right: 2px; }
+.sec-nota{ font-weight: 400; font-size: .8rem; color: var(--tinta-suave); }
+.doc-head + .doc-h3{ margin-top: 0; }
 
 .doc-table{
   width: 100%;
@@ -368,38 +455,225 @@ select:disabled{ background:#f1f3f5; color:#9aa7b1; cursor:not-allowed; }
 .kv th{ width: 20%; }
 .kv td{ width: 30%; }
 
-.malla thead th{
-  background: var(--acento);
-  color: #fff;
+.doc-table + .doc-table{ margin-top: 10px; }
+.doc-table td p{ margin: 0 0 5px; }
+.doc-table td p:last-child{ margin-bottom: 0; }
+
+.doc-vacio{
+  margin: 24px 0 0;
+  padding: 18px;
   text-align: center;
-  font-size: .76rem;
-  letter-spacing: .04em;
+  color: var(--tinta-suave);
+  background: #f7f9fa;
+  border: 1px dashed var(--borde);
+  border-radius: var(--r);
 }
-.malla td{ width: 33.33%; font-size: .82rem; }
+.doc-nota{ margin: 0 0 8px; font-size: .8rem; color: var(--tinta-suave); }
 
-.momentos .c-mom{ width: 16%; }
-.momentos .c-min{ width: 13%; text-align: center; }
-.momentos td{ font-size: .82rem; white-space: pre-line; }
-
-.saber-doc{ display: block; margin-bottom: 6px; }
-.saber-doc:last-child{ margin-bottom: 0; }
-.saber-doc code{
-  font-family: var(--mono);
-  font-size: .76rem;
-  color: var(--acento);
-  margin-right: 3px;
-}
-.saber-doc em{ color: var(--tinta-suave); font-size: .74rem; }
-
-.comp-num{
-  display:block;
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--acento);
+.chequeo{ margin: 0; padding: 0; list-style: none; }
+.chequeo li{
+  position: relative;
+  padding-left: 19px;
   margin-bottom: 4px;
 }
+.chequeo li:last-child{ margin-bottom: 0; }
+.chequeo li::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .22em;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--tinta-suave);
+  border-radius: 2px;
+}
+
+/* ---- Tablas del formato institucional ---- */
+.plantilla th, .plantilla td{ border-color: #8795a1; font-size: .84rem; }
+.plantilla th{ color: var(--tinta); font-size: .82rem; font-weight: 700; letter-spacing: 0; }
+.plantilla ul{ margin: 0; padding-left: 18px; }
+.plantilla li{ margin-bottom: 3px; }
+.plantilla li:last-child{ margin-bottom: 0; }
+.plantilla thead th{ text-align: center; }
+
+.datos col.c-rotulo{ width: 24%; }
+.rotulo-centro{ text-align: center; font-weight: 700; margin-bottom: 6px !important; }
+.ideas li{ margin-bottom: 5px; }
+.ejemplo{ display: block; color: var(--tinta-suave); font-size: .8rem; }
+
+.tipo-saber{
+  display: block;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--acento);
+}
+
+.subtitulo{ margin: 10px 0 5px !important; font-weight: 700; }
+
+/* ---- Desarrollo de la secuencia ---- */
+.desarrollo col.c-momento{ width: 15%; }
+.desarrollo th.momento{ text-align: center; vertical-align: middle; font-size: .9rem; }
+.desarrollo th.momento span{ display: block; font-weight: 400; font-size: .76rem; color: var(--tinta-suave); }
+.desarrollo th.secundario{ font-size: .8rem; }
+
+.actividad{ padding: 8px 0; border-bottom: 1px dashed #c7d0d7; }
+.actividad:first-child{ padding-top: 0; }
+.actividad:last-child{ padding-bottom: 0; border-bottom: none; }
+.actividad p{ margin: 0 0 4px; }
+.actividad-titulo{ font-weight: 700; font-size: .9rem; }
+.actividad-titulo .num{
+  display: inline-grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  margin-right: 6px;
+  font-size: .72rem;
+  color: #fff;
+  background: var(--acento);
+  border-radius: 50%;
+}
+.actividad-min{ display: block; margin-left: 25px; font-weight: 400; font-size: .76rem; color: var(--tinta-suave); }
+.guion{
+  padding: 5px 8px;
+  background: var(--acento-claro);
+  border-left: 3px solid var(--acento);
+}
+.espere{ display: block; color: #324350; margin-top: 2px; }
+.verifique{ font-size: .8rem; color: #324350; }
+.tag{
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 7px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--acento);
+  border: 1px solid var(--acento);
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.fallas li{ margin-bottom: 6px; }
+.fallas span{ display: block; font-size: .8rem; }
+.fallas .causa{ color: var(--tinta-suave); }
+
+/* ---- Anotación de alumnos ---- */
+.anotacion td{ height: 26px; }
+
+/* ---- Evaluación ---- */
+.evaluacion-resumen{ margin: 22px 0 8px; font-size: .88rem; }
+.criterios col.c-et{ width: 6%; }
+.criterios col.c-tipo{ width: 17%; }
+.criterios col.c-donde{ width: 27%; }
+.criterios td:nth-child(3){ overflow-wrap: normal; font-size: .8rem; }
+.criterios col.c-pts{ width: 9%; }
+.criterios td.c-et{ font-weight: 700; color: var(--acento); }
+.criterios td.c-pts{ text-align: center; }
+.momento-ref{ color: var(--tinta-suave); font-size: .78rem; }
+.regla-logro{
+  margin: 10px 0 0;
+  padding: 8px 11px;
+  font-size: .84rem;
+  background: var(--acento-claro);
+  border-left: 3px solid var(--acento);
+}
+
+/* ---- Código ---- */
+.anexo-codigo{ margin-top: 30px; }
+.codigo-bloque{ margin-bottom: 10px; }
+.codigo-titulo{ margin: 0 0 3px; font-size: .8rem; font-weight: 600; }
+.codigo{
+  margin: 0;
+  padding: 9px 11px;
+  font-family: var(--mono);
+  font-size: .74rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  background: #f4f6f7;
+  border: 1px solid var(--borde);
+  border-radius: var(--r);
+}
+
+/* ---- Instrumento ---- */
+.anexo{ margin-top: 0; }
+.inst-instrucciones{ margin: 12px 0; font-size: .82rem; }
+.inst td{ font-size: .8rem; }
+.inst thead th{ background: var(--acento); color: #fff; text-align: center; }
+.inst .c-pts{ width: 11%; text-align: center; }
+.inst .c-marca{ width: 7%; }
+.inst .c-nivel{ width: 10%; text-align: center; }
+.inst td.c-nivel{ vertical-align: middle; font-weight: 600; }
+.crit-et{ color: var(--acento); }
+.crit-ev, .crit-ref{ display: block; margin-top: 3px; font-size: .72rem; color: var(--tinta-suave); }
+.inst-total th{ text-align: right; }
+.inst tr.grupo th{
+  background: #e6eef0;
+  color: var(--tinta);
+  font-size: .78rem;
+  text-align: left;
+}
+.inst tr.grupo th span{ font-weight: 400; color: var(--tinta-suave); }
+
+.logro{ margin-top: 4px; }
+.logro-comp{ margin: 0 0 8px; font-size: .82rem; }
+.logro-saber th, .logro-escala th{ font-size: .78rem; }
+.logro-saber tbody th span{ font-weight: 400; color: var(--tinta-suave); }
+.logro-saber col.c-crits{ width: 18%; }
+.logro-saber col.c-si-no{ width: 22%; }
+.logro-saber td, .logro-escala td{ font-size: .8rem; vertical-align: middle; }
+.logro-escala{ margin-top: 8px; }
+.logro-escala col.c-casilla{ width: 6%; }
+.logro-escala col.c-nivel-logro{ width: 24%; }
+.logro-escala col.c-rango{ width: 22%; }
+.logro-escala td.c-casilla{ text-align: center; }
+.logro-ayuda{ margin: 4px 0 0; font-size: .74rem; color: var(--tinta-suave); }
+.logro-regla{ margin: 8px 0 0; font-size: .8rem; }
+.casilla{
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin: 0 4px 0 6px;
+  vertical-align: -1px;
+  border: 1px solid var(--tinta);
+  border-radius: 2px;
+}
+.c-casilla .casilla{ margin: 0; }
+.inst-total td{ font-weight: 700; text-align: center; white-space: nowrap; }
+
+.rubrica td{ font-size: .74rem; }
+.rubrica col.c-crit{ width: 25%; }
+.rubrica col.c-pts{ width: 8%; }
+.nivel-pts{ display: block; margin-top: 4px; font-weight: 700; color: var(--acento); }
+
+.bitacora .c-bit{ width: 23%; text-align: center; }
+.marca-pts{
+  display: inline-block;
+  min-width: 26px;
+  margin: 2px;
+  padding: 1px 3px;
+  font-size: .74rem;
+  border: 1px solid var(--tinta-suave);
+  border-radius: 3px;
+}
+.renglon{
+  display: block;
+  height: 22px;
+  border-bottom: 1px solid #b9c4cd;
+}
+
+.inst-retro{ margin-top: 12px; font-size: .82rem; }
+.inst-retro p{ margin: 0; }
+
+.inst-sub{
+  margin: 18px 0 8px;
+  font-family: var(--serif);
+  font-size: .95rem;
+  color: var(--acento);
+}
+.cuadro td{ height: 22px; padding: 2px 5px; }
+.cuadro .c-num{ width: 7%; text-align: center; }
+.cuadro .c-cuadro{ width: 8%; text-align: center; }
+.cuadro small{ display: block; font-weight: 400; }
 
 .firmas{
   display: grid;
@@ -441,6 +715,7 @@ select:disabled{ background:#f1f3f5; color:#9aa7b1; cursor:not-allowed; }
 @media (max-width: 1040px){
   .layout{ grid-template-columns: 1fr; }
   .panel{ position: static; }
+  .preview{ position: static; max-height: none; overflow: visible; }
   .doc{ padding: 28px 24px; }
 }
 @media (max-width: 520px){
@@ -463,6 +738,8 @@ select:disabled{ background:#f1f3f5; color:#9aa7b1; cursor:not-allowed; }
 @media print{
   body{ background:#fff; font-size: 10.5pt; }
   .topbar, .panel, .preview-bar, .aviso{ display: none !important; }
+  .solo-instrumento #doc-secuencia{ display: none; }
+  .preview{ position: static; max-height: none; overflow: visible; }
   .layout{
     display: block;
     max-width: none;
@@ -478,20 +755,29 @@ select:disabled{ background:#f1f3f5; color:#9aa7b1; cursor:not-allowed; }
   .doc-head h2{ font-size: 16pt; }
   .doc-h3{
     font-size: 10.5pt;
-    color: #0f5d63;
+    color: #16202b;
     break-after: avoid;
     page-break-after: avoid;
   }
   .doc-table{ break-inside: auto; }
   .doc-table tr{ break-inside: avoid; page-break-inside: avoid; }
-  .malla thead th{
-    background: var(--acento) !important;
-    color: #fff !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .doc-table th{
-    background: #f1f5f6 !important;
+  .codigo-bloque, .actividad, .logro, .regla-logro{ break-inside: avoid; page-break-inside: avoid; }
+  .desarrollo tr{ break-inside: auto; page-break-inside: auto; }
+  .inst tr.grupo{ break-after: avoid; page-break-after: avoid; }
+  .anexo-codigo{ margin-top: 0; break-before: page; page-break-before: always; }
+  .anexo{ margin-top: 0; break-before: page; page-break-before: always; }
+  .solo-instrumento .anexo{ break-before: auto; page-break-before: auto; }
+  /* El instrumento se fotocopia: se compacta para que quepa en una hoja. */
+  .anexo .doc-head{ padding-bottom: 6pt; margin-bottom: 8pt; }
+  .anexo .doc-head h2{ font-size: 13pt; }
+  .anexo .doc-table th, .anexo .doc-table td{ padding: 3pt 5pt; }
+  .anexo .inst-instrucciones{ margin: 6pt 0; }
+  .anexo .rubrica td{ font-size: 7.5pt; line-height: 1.3; }
+  .anexo .renglon{ height: 16pt; }
+  .anexo .inst-retro{ margin-top: 6pt; }
+  .anexo .cuadro-grupo{ break-before: page; page-break-before: always; }
+  .anexo .cuadro-grupo .inst-sub{ margin-top: 0; }
+  .doc-table th, .inst thead th, .actividad-titulo .num, .guion, .regla-logro, .codigo{
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

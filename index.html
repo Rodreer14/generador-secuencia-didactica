@@ -22,7 +22,8 @@
     </div>
     <div class="topbar-actions">
       <button type="button" id="btn-limpiar" class="btn btn-ghost">Limpiar</button>
-      <button type="button" id="btn-pdf" class="btn btn-primary">Generar PDF</button>
+      <button type="button" id="btn-pdf-instrumento" class="btn btn-ghost">PDF del instrumento</button>
+      <button type="button" id="btn-pdf" class="btn btn-primary">PDF completo</button>
     </div>
   </div>
 </header>
@@ -41,7 +42,7 @@
             <input type="text" id="establecimiento" placeholder="Nombre del centro educativo">
           </label>
           <label class="field span-2">
-            <span>Docente responsable</span>
+            <span>Catedrático</span>
             <input type="text" id="docente" placeholder="Nombre completo">
           </label>
           <label class="field">
@@ -59,6 +60,10 @@
           <label class="field">
             <span>No. de periodos</span>
             <input type="number" id="periodos" min="1" max="10" value="2">
+          </label>
+          <label class="field">
+            <span>Minutos por periodo</span>
+            <input type="number" id="minutos-periodo" min="1" max="120" value="40">
           </label>
           <label class="field">
             <span>Estudiantes</span>
@@ -121,7 +126,7 @@
         <p class="hint" id="hint-idiomas" hidden></p>
       </fieldset>
 
-      <fieldset class="group">
+      <fieldset class="group" id="grupo-curricular">
         <legend><span class="step">3</span> Selección curricular</legend>
         <div class="grid">
           <label class="field span-2">
@@ -144,38 +149,55 @@
         </div>
       </fieldset>
 
-      <fieldset class="group">
-        <legend><span class="step">4</span> Desarrollo de la clase</legend>
-        <p class="hint">Al elegir el indicador se cargan actividades sugeridas. Edítelas según su grupo.</p>
-        <div class="momento">
-          <div class="momento-head">
-            <h3>Inicio</h3>
-            <label class="mini">Min. <input type="number" id="min-inicio" min="0" value="15"></label>
+      <fieldset class="group" id="grupo-guia">
+        <legend><span class="step">4</span> Guía de la clase</legend>
+        <p class="hint" id="sin-plan">Al elegir el indicador se carga la guía completa de la clase y su evaluación.</p>
+
+        <div id="edicion-plan" hidden>
+          <p class="hint">Todo es editable. Abra cualquier paso para ajustarlo a su grupo.</p>
+
+          <div class="field">
+            <span>Tema principal</span>
+            <input type="text" id="tema">
           </div>
-          <textarea id="act-inicio" rows="4" placeholder="Actividades de exploración de saberes previos…"></textarea>
-        </div>
-        <div class="momento">
-          <div class="momento-head">
-            <h3>Desarrollo</h3>
-            <label class="mini">Min. <input type="number" id="min-desarrollo" min="0" value="50"></label>
+          <div class="field">
+            <span>Propósito de la clase</span>
+            <textarea id="proposito" rows="3"></textarea>
           </div>
-          <textarea id="act-desarrollo" rows="6" placeholder="Actividades de construcción y aplicación…"></textarea>
-        </div>
-        <div class="momento">
-          <div class="momento-head">
-            <h3>Cierre</h3>
-            <label class="mini">Min. <input type="number" id="min-cierre" min="0" value="15"></label>
+          <div class="field">
+            <span>Antes de la clase (una tarea por línea)</span>
+            <textarea id="preparacion" rows="5"></textarea>
           </div>
-          <textarea id="act-cierre" rows="4" placeholder="Actividades de socialización y metacognición…"></textarea>
-        </div>
-        <div class="field">
-          <span>Recursos y materiales</span>
-          <textarea id="recursos" rows="3" placeholder="Materiales previstos para la clase"></textarea>
+          <div class="field">
+            <span>Recursos (uno por línea)</span>
+            <textarea id="recursos" rows="4"></textarea>
+          </div>
+
+          <p class="resumen" id="resumen-tiempo" role="status"></p>
+
+          <div class="momento"><h3>Inicio</h3><div id="pasos-inicio"></div></div>
+          <div class="momento"><h3>Desarrollo</h3><div id="pasos-desarrollo"></div></div>
+          <div class="momento"><h3>Cierre</h3><div id="pasos-cierre"></div></div>
+
+          <div class="momento"><h3>Conceptos clave</h3><div id="lista-conceptos"></div></div>
+          <div class="momento"><h3>Código de referencia</h3><div id="lista-codigo"></div></div>
+          <div class="momento"><h3>Previsión de dificultades</h3><div id="lista-dificultades"></div></div>
+
+          <div class="momento">
+            <h3>Adaptaciones y manejo del tiempo</h3>
+            <div class="grid">
+              <label class="field span-2"><span>Quien necesita apoyo</span><textarea id="apoyo" rows="3"></textarea></label>
+              <label class="field span-2"><span>Quien termina antes</span><textarea id="reto" rows="3"></textarea></label>
+              <label class="field span-2"><span>Si falta tiempo</span><textarea id="si-falta" rows="3"></textarea></label>
+              <label class="field span-2"><span>Si sobra tiempo</span><textarea id="si-sobra" rows="3"></textarea></label>
+            </div>
+          </div>
         </div>
       </fieldset>
 
-      <fieldset class="group">
+      <fieldset class="group" id="grupo-evaluacion">
         <legend><span class="step">5</span> Evaluación</legend>
+        <p class="hint" id="sin-plan-eval">Elija la competencia y el indicador de logro (sección 3) para generar el instrumento.</p>
         <div class="grid">
           <label class="field">
             <span>Tipo</span>
@@ -199,18 +221,23 @@
             <select id="eval-instrumento">
               <option>Lista de cotejo</option>
               <option>Escala de rango</option>
-              <option>Rúbrica</option>
+              <option selected>Rúbrica</option>
               <option>Bitácora de laboratorio</option>
             </select>
           </label>
           <label class="field">
-            <span>Ponderación</span>
-            <input type="text" id="eval-punteo" placeholder="10 puntos">
+            <span>Ponderación (puntos)</span>
+            <input type="number" id="eval-punteo" min="1" value="10">
           </label>
-          <div class="field span-2">
-            <span>Criterios de evaluación</span>
-            <textarea id="eval-criterios" rows="4" placeholder="Qué se evalúa y con qué nivel de exigencia"></textarea>
-          </div>
+        </div>
+        <label class="check">
+          <input type="checkbox" id="eval-cuadro">
+          <span>Agregar cuadro de registro de todo el grupo</span>
+        </label>
+
+        <div id="edicion-eval" hidden>
+          <p class="resumen" id="cobertura" role="status"></p>
+          <div class="momento"><h3>Criterios de evaluación</h3><div id="lista-criterios"></div></div>
         </div>
       </fieldset>
 
@@ -220,84 +247,30 @@
   <!-- ============ VISTA PREVIA / DOCUMENTO ============ -->
   <section class="preview" aria-label="Vista previa del documento">
     <div class="preview-bar">
-      <span>Vista previa</span>
+      <div class="pestanas" role="tablist" aria-label="Documento a mostrar">
+        <button type="button" role="tab" id="tab-secuencia" aria-controls="doc-secuencia" aria-selected="true">Secuencia didáctica</button>
+        <button type="button" role="tab" id="tab-instrumento" aria-controls="doc-instrumento" aria-selected="false">Instrumento: <span id="tab-instrumento-nombre">Rúbrica</span></button>
+      </div>
       <span class="preview-note">Así se imprimirá</span>
     </div>
 
-    <article id="doc" class="doc">
-      <header class="doc-head">
-        <p class="doc-estab" id="d-establecimiento">Establecimiento educativo</p>
-        <h2>Secuencia didáctica</h2>
-        <p class="doc-sub">Curso de Robótica · Nivel de aplicación (taxonomía de Bloom)</p>
-      </header>
+    <article id="doc-secuencia" class="doc" role="tabpanel" aria-labelledby="tab-secuencia"></article>
 
-      <h3 class="doc-h3">I. Datos generales</h3>
-      <table class="doc-table kv">
-        <tbody>
-          <tr><th>Docente</th><td id="d-docente">—</td><th>Fecha</th><td id="d-fecha">—</td></tr>
-          <tr><th>Grado y sección</th><td id="d-grado">—</td><th>Periodos</th><td id="d-periodos">—</td></tr>
-          <tr><th>Estudiantes</th><td id="d-estudiantes">—</td><th>Modalidad</th><td id="d-modalidad">—</td></tr>
-        </tbody>
-      </table>
-
-      <h3 class="doc-h3">II. Contexto territorial y lingüístico</h3>
-      <table class="doc-table kv">
-        <tbody>
-          <tr><th>Departamento</th><td id="d-departamento">—</td><th>Municipio</th><td id="d-municipio">—</td></tr>
-          <tr><th>Área</th><td id="d-area">—</td><th>Enfoque lingüístico</th><td id="d-enfoque">—</td></tr>
-          <tr><th>Idioma de instrucción</th><td id="d-idioma">—</td><th>Idioma materno</th><td id="d-idioma-materno">—</td></tr>
-          <tr><th>Contextualización</th><td colspan="3" id="d-contexto">—</td></tr>
-        </tbody>
-      </table>
-
-      <h3 class="doc-h3">III. Competencia, indicador y saberes</h3>
-      <table class="doc-table malla">
-        <thead>
-          <tr><th>Competencia</th><th>Indicador de logro</th><th>Saberes</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td id="d-competencia">—</td>
-            <td id="d-indicador">—</td>
-            <td id="d-saberes">—</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3 class="doc-h3">IV. Desarrollo de la clase</h3>
-      <table class="doc-table momentos">
-        <thead>
-          <tr><th class="c-mom">Momento</th><th>Actividades</th><th class="c-min">Tiempo</th></tr>
-        </thead>
-        <tbody>
-          <tr><th class="c-mom">Inicio</th><td id="d-inicio">—</td><td class="c-min" id="d-min-inicio">—</td></tr>
-          <tr><th class="c-mom">Desarrollo</th><td id="d-desarrollo">—</td><td class="c-min" id="d-min-desarrollo">—</td></tr>
-          <tr><th class="c-mom">Cierre</th><td id="d-cierre">—</td><td class="c-min" id="d-min-cierre">—</td></tr>
-          <tr><th class="c-mom">Recursos</th><td colspan="2" id="d-recursos">—</td></tr>
-        </tbody>
-      </table>
-
-      <h3 class="doc-h3">V. Evaluación</h3>
-      <table class="doc-table kv">
-        <tbody>
-          <tr><th>Tipo</th><td id="d-eval-tipo">—</td><th>Técnica</th><td id="d-eval-tecnica">—</td></tr>
-          <tr><th>Instrumento</th><td id="d-eval-instrumento">—</td><th>Ponderación</th><td id="d-eval-punteo">—</td></tr>
-          <tr><th>Criterios</th><td colspan="3" id="d-eval-criterios">—</td></tr>
-        </tbody>
-      </table>
-
-      <div class="firmas">
-        <div><span class="linea"></span><p>Firma del docente</p></div>
-        <div><span class="linea"></span><p>Vo.Bo. Dirección técnica</p></div>
-      </div>
-    </article>
+    <article id="doc-instrumento" class="doc anexo oculto" role="tabpanel" aria-labelledby="tab-instrumento"></article>
   </section>
 
 </main>
 
 <div id="aviso" class="aviso" role="status" hidden></div>
 
-<script src="datos.js"></script>
-<script src="app.js"></script>
+<script src="datos/catalogos.js"></script>
+<script src="datos/competencia-1.js"></script>
+<script src="datos/competencia-2.js"></script>
+<script src="datos/competencia-3.js"></script>
+<script src="js/nucleo.js"></script>
+<script src="js/instrumento.js"></script>
+<script src="js/documento.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
